@@ -1,6 +1,7 @@
 const TodoListItem = (prop) => {
+  const { task } = prop;
   return (
-    <li>{prop.task}</li>
+    <li>{task}</li>
   )
 
 }
