@@ -1,7 +1,8 @@
+
 const TodoListItem = (prop) => {
-  const { task } = prop;
+  const { taskId, task, onRemoveTodo } = prop;
   return (
-    <li>{task}</li>
+    <li>{task}<button onClick={()=>{onRemoveTodo(taskId)}}>Remove</button></li>
   )
 
 }
