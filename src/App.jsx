@@ -3,9 +3,6 @@ import AddTodoForm from './AddTodoForm.jsx'
 import {useState, useEffect} from 'react';
 import './App.css'
 
-
-  
-
 function App() {
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
