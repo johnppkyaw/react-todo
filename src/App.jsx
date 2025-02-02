@@ -1,9 +1,9 @@
-import TodoList from './TodoList.jsx'
-import AddTodoForm from './AddTodoForm.jsx'
+import TodoList from './components/TodoList.jsx'
+import AddTodoForm from './components/AddTodoForm.jsx'
 import {useState, useEffect} from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css'
-import styles from './TodoListItem.module.css';
+import styles from './components/TodoListItem.module.css';
 
 
 function App() {
