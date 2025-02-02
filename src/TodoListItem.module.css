@@ -1,3 +1,7 @@
+body {
+  background-color: #371c47;
+}
+
 .ListItem {
   color: #00ffc3;
   list-style: none;
