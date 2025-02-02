@@ -1,10 +1,11 @@
 import TodoListItem from "./TodoListItem.jsx";
+import styles from './TodoListItem.module.css';
 
 const TodoList = (props) => {
   const { todoList, onRemoveTodo } = props;
   return (
     <>
-      <ul>
+      <ul className={styles.ListItemHolder}>
         {
           todoList.map(function(eachTask) {
             return (

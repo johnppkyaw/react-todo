@@ -3,6 +3,7 @@ import AddTodoForm from './AddTodoForm.jsx'
 import {useState, useEffect} from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css'
+import styles from './TodoListItem.module.css';
 
 
 function App() {
@@ -68,7 +69,7 @@ function App() {
         <Route path="/" element={
           <>
             <p>{isLoading ? "Loading..." : "" }</p>
-            <h1>Todo List</h1>
+            <h1 className={styles.TodoTitle}>Todo List</h1>
             <AddTodoForm onAddTodo={addTodo}/>
             <TodoList todoList={todoList} onRemoveTodo={removeTodo}/>
           </>

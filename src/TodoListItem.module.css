@@ -1,0 +1,73 @@
+.ListItem {
+  color: #00ffc3;
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 1.5em;
+}
+
+.ListItem > button:hover {
+  background-color: red;
+}
+
+.TodoTitle {
+  font-size: 4em;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #9be737;  
+}
+
+.TodoField {
+  font-size: 1.75em;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 2px rgb(128, 248, 0) solid;
+  border-radius: 5px;
+  background-color: #447307;
+}
+
+.TodoField > input {
+  font-size: 20px;
+  background-color: rgb(63, 187, 212);
+  color:black;
+}
+
+.TodoField > button {
+  font-size: 0.75em;
+}
+
+.TodoField > button:hover {
+  background-color:rgb(90, 157, 234);
+}
+
+.ListItemHolder {
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  margin:0px;
+  padding:0px;
+}
+
+@media (width <= 430px) {
+  .TodoTitle {
+    color: #167cdb;  
+  }
+
+  .TodoField {
+    flex-direction: column;
+  }
+
+  .ListItem {
+    flex-direction: column;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 10px;
+  }
+}
