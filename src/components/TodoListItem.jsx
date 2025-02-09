@@ -9,7 +9,7 @@ const TodoListItem = (prop) => {
 }
 
 TodoListItem.propTypes = {
-  taskId: PropTypes.string,
+  taskId: PropTypes.number,
   task: PropTypes.string,
   onRemoveTodo: PropTypes.func
 }

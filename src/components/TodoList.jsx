@@ -10,7 +10,7 @@ const TodoList = (props) => {
         {
           todoList.map(function(eachTask) {
             return (
-              <TodoListItem key={eachTask.id} taskId={eachTask.id} task={eachTask.title} onRemoveTodo={onRemoveTodo} />              
+              <TodoListItem key={eachTask.id} taskId={Number(eachTask.id)} task={eachTask.title} onRemoveTodo={onRemoveTodo} />              
             )
           })
         }
