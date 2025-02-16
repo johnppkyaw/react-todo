@@ -11,7 +11,11 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
-    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`
+
+    const viewValue = 'Grid%20view';
+    const sortFieldValue = 'title';
+    const sortDirectionValue = 'asc';
+    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?view=${viewValue}&sort[0][field]=${sortFieldValue}&sort[0][direction]=${sortDirectionValue}`;
 
     const options = {
       method : "GET",
@@ -28,6 +32,15 @@ function App() {
         throw new Error(errorMsg);
       }
       const data = await response.json();
+
+      data.records.sort((objectA, objectB) => {
+        const titleA = objectA.fields.title;
+        const titleB = objectB.fields.title;
+
+        return titleA < titleB ? 1 
+        : titleA > titleB ? -1 
+        : 0;
+      })
 
       const todo = data.records.map(todo => {
         const newTodo = {
