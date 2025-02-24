@@ -33,6 +33,8 @@ function App() {
       }
       const data = await response.json();
 
+      console.log(data);
+
       data.records.sort((objectA, objectB) => {
         const titleA = objectA.fields.title;
         const titleB = objectB.fields.title;
@@ -45,7 +47,8 @@ function App() {
       const todo = data.records.map(todo => {
         const newTodo = {
           id: todo.id,
-          title: todo.fields.title
+          title: todo.fields.title,
+          completedAt: todo.fields.completedAt
         }
         return newTodo;
       })
@@ -99,6 +102,42 @@ function App() {
     setTodoList([...filteredTodoList]);
   }
 
+  const updateData = async (id, clickedTime) => {
+    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}/${id}`;
+
+    const payLoad = {
+      fields: {
+        completedAt: clickedTime
+      },
+      typecast: true
+    }
+
+    const options = {
+      method: "PATCH",
+      body: JSON.stringify(payLoad),
+      "headers" : {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`
+      }
+    }
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const errorMsg = `Error: ${response.status}`;
+        throw new Error(errorMsg);
+      }
+    } catch(error) {
+      console.log(error.message);
+    }
+  };
+
+  const finishTodo = (id, index) => {
+    const clickedTime = new Date();
+    todoList[index].completedAt = clickedTime;
+    updateData(id, clickedTime);
+    setTodoList([...todoList]);
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -107,7 +146,7 @@ function App() {
             <p>{isLoading ? "Loading..." : "" }</p>
             <h1 className={styles.TodoTitle}>Todo List</h1>
             <AddTodoForm onAddTodo={addTodo}/>
-            <TodoList todoList={todoList} onRemoveTodo={removeTodo}/>
+            <TodoList todoList={todoList} onRemoveTodo={removeTodo} onFinishTodo={finishTodo}/>
           </>
         }
         />

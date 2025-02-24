@@ -3,14 +3,15 @@ import styles from './TodoListItem.module.css';
 import PropTypes from 'prop-types';
 
 const TodoList = (props) => {
-  const { todoList, onRemoveTodo } = props;
+  const { todoList, onRemoveTodo, onFinishTodo } = props;
+
   return (
     <>
       <ul className={styles.ListItemHolder}>
         {
-          todoList.map(function(eachTask) {
+          todoList.map(function(eachTask, index) {
             return (
-              <TodoListItem key={eachTask.id} taskId={eachTask.id} task={eachTask.title} onRemoveTodo={onRemoveTodo} />              
+              <TodoListItem index={index} key={eachTask.id} taskId={eachTask.id} task={eachTask.title} onRemoveTodo={onRemoveTodo} onFinishTodo={onFinishTodo} completedAt={eachTask.completedAt}/>              
             )
           })
         }
@@ -21,7 +22,8 @@ const TodoList = (props) => {
 
 TodoList.propTypes = {
   todoList: PropTypes.array,
-  onRemoveTodo: PropTypes.func
+  onRemoveTodo: PropTypes.func,
+  onFinishTodo: PropTypes.func
 }
 
 export default TodoList
