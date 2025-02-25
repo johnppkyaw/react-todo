@@ -59,6 +59,11 @@ body {
   padding:0px;
 }
 
+.Finish {
+  text-decoration: line-through;
+  color: gray
+}
+
 @media (width <= 430px) {
   .TodoTitle {
     color: #167cdb;  

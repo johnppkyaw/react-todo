@@ -5,10 +5,10 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css'
 import styles from './components/TodoListItem.module.css';
 
-
 function App() {
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChecked, setIsChecked] = useState(false);
 
   const fetchData = async () => {
 
@@ -33,19 +33,11 @@ function App() {
       }
       const data = await response.json();
 
-      data.records.sort((objectA, objectB) => {
-        const titleA = objectA.fields.title;
-        const titleB = objectB.fields.title;
-
-        return titleA < titleB ? 1 
-        : titleA > titleB ? -1 
-        : 0;
-      })
-
       const todo = data.records.map(todo => {
         const newTodo = {
           id: todo.id,
-          title: todo.fields.title
+          title: todo.fields.title,
+          completedAt: todo.fields.completedAt
         }
         return newTodo;
       })
@@ -59,6 +51,10 @@ function App() {
 
   };
 
+  const toggleSort = () => {
+    setIsChecked(prev => !prev);
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
@@ -66,16 +62,103 @@ function App() {
   useEffect(() => {
     if(!isLoading) {
       localStorage.setItem("savedTodoList", JSON.stringify(todoList));
-    }  
-  }, [todoList, isLoading])  
+    }
+  }, [todoList, isLoading]) 
+  
+  useEffect(() => {
+    if(isChecked) {
+      setTodoList(prev => {
+        const sortedList = [...prev].sort((objectA, objectB) => {
+          const titleA = objectA.title;
+          const titleB = objectB.title;
+  
+          return titleA < titleB ? 1
+            : titleA > titleB ? -1
+            : 0;
+        });
+        return sortedList;
+      })
+    } else {
+      setTodoList(prev => {
+        const sortedList = [...prev].sort((objectA, objectB) => {
+          const titleA = objectA.title;
+          const titleB = objectB.title;
+  
+          return titleA < titleB ? -1
+            : titleA > titleB ? 1
+            : 0;
+        });
+        return sortedList;
+      })
+    }
+  }, [isChecked])
 
   const addTodo = (newTodo) => {
     setTodoList([...todoList, newTodo]);
   }
+
+  const deleteData = async (id) => {
+    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}/${id}`;
+
+    const options = {
+      method: "DELETE",
+      "headers" : {
+        Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`
+      }
+    }
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const errorMsg = `Error: ${response.status}`;
+        throw new Error(errorMsg);
+      }
+    } catch(error) {
+      console.log(error.message);
+    }
+  };
+
   const removeTodo = (id) => {
     const filteredTodoList = todoList.filter(todo => todo.id != id);
+    deleteData(id);
     setTodoList([...filteredTodoList]);
   }
+
+  const updateData = async (id, clickedTime) => {
+    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}/${id}`;
+
+    const payLoad = {
+      fields: {
+        completedAt: clickedTime
+      },
+      typecast: true
+    }
+
+    const options = {
+      method: "PATCH",
+      body: JSON.stringify(payLoad),
+      "headers" : {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`
+      }
+    }
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const errorMsg = `Error: ${response.status}`;
+        throw new Error(errorMsg);
+      }
+    } catch(error) {
+      console.log(error.message);
+    }
+  };
+
+  const finishTodo = (id, index) => {
+    const clickedTime = new Date();
+    todoList[index].completedAt = clickedTime;
+    updateData(id, clickedTime);
+    setTodoList([...todoList]);
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -84,7 +167,9 @@ function App() {
             <p>{isLoading ? "Loading..." : "" }</p>
             <h1 className={styles.TodoTitle}>Todo List</h1>
             <AddTodoForm onAddTodo={addTodo}/>
-            <TodoList todoList={todoList} onRemoveTodo={removeTodo}/>
+            <input id="sort" type="checkbox" onChange={()=>toggleSort()}></input>
+            <label htmlFor="sort">Sort by descending order</label>
+            <TodoList todoList={todoList} onRemoveTodo={removeTodo} onFinishTodo={finishTodo}/>
           </>
         }
         />
