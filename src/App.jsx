@@ -5,10 +5,10 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css'
 import styles from './components/TodoListItem.module.css';
 
-
 function App() {
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChecked, setIsChecked] = useState(false);
 
   const fetchData = async () => {
 
@@ -33,17 +33,6 @@ function App() {
       }
       const data = await response.json();
 
-      console.log(data);
-
-      data.records.sort((objectA, objectB) => {
-        const titleA = objectA.fields.title;
-        const titleB = objectB.fields.title;
-
-        return titleA < titleB ? 1 
-        : titleA > titleB ? -1 
-        : 0;
-      })
-
       const todo = data.records.map(todo => {
         const newTodo = {
           id: todo.id,
@@ -62,6 +51,10 @@ function App() {
 
   };
 
+  const toggleSort = () => {
+    setIsChecked(prev => !prev);
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
@@ -69,8 +62,36 @@ function App() {
   useEffect(() => {
     if(!isLoading) {
       localStorage.setItem("savedTodoList", JSON.stringify(todoList));
-    }  
-  }, [todoList, isLoading])  
+    }
+  }, [todoList, isLoading]) 
+  
+  useEffect(() => {
+    if(isChecked) {
+      setTodoList(prev => {
+        const sortedList = [...prev].sort((objectA, objectB) => {
+          const titleA = objectA.title;
+          const titleB = objectB.title;
+  
+          return titleA < titleB ? 1
+            : titleA > titleB ? -1
+            : 0;
+        });
+        return sortedList;
+      })
+    } else {
+      setTodoList(prev => {
+        const sortedList = [...prev].sort((objectA, objectB) => {
+          const titleA = objectA.title;
+          const titleB = objectB.title;
+  
+          return titleA < titleB ? -1
+            : titleA > titleB ? 1
+            : 0;
+        });
+        return sortedList;
+      })
+    }
+  }, [isChecked])
 
   const addTodo = (newTodo) => {
     setTodoList([...todoList, newTodo]);
@@ -146,6 +167,8 @@ function App() {
             <p>{isLoading ? "Loading..." : "" }</p>
             <h1 className={styles.TodoTitle}>Todo List</h1>
             <AddTodoForm onAddTodo={addTodo}/>
+            <input id="sort" type="checkbox" onChange={()=>toggleSort()}></input>
+            <label htmlFor="sort">Sort by descending order</label>
             <TodoList todoList={todoList} onRemoveTodo={removeTodo} onFinishTodo={finishTodo}/>
           </>
         }
